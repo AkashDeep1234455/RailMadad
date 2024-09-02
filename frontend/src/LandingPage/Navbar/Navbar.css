@@ -1,0 +1,96 @@
+.Navbar{
+    height: 5rem;
+    width: 100%;
+    background-color: white;
+    padding: 1rem;
+
+    display: flex;
+    gap: 2rem;
+    justify-content: space-between;
+    align-items: center;
+    color: black;
+}
+
+.Navbar img{
+    height: 4rem;
+    padding-top: 0.2rem;
+}
+
+.logo{
+    color: black;
+}
+
+.RailMadadL{
+    color: #75002B;
+    font-size: 2.5rem;
+    font-weight: bolder;
+}
+
+.helpline{
+    color: black;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 5.5rem;
+    height: 3rem;
+    background-color: #75002B;
+    border-radius: 0.5rem;
+    animation: colorChange 3s infinite;
+}
+
+@keyframes colorChange {
+    0% {
+      background-color: #75002B; /* Start color */
+    }
+    50% {
+      background-color: #FF5733; /* Midpoint color */
+    }
+    100% {
+      background-color: #75002B; /* End color (back to start color) */
+    }
+  }
+
+.helpline .icon{
+    font-size: 1.5rem;
+}
+
+.helpline p{
+    font-size: 1.5rem;
+}
+
+.helplineSection{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+button{
+    width: 5rem;
+    height: 2rem;
+    border-radius: 1.5rem;
+}
+
+/* .language{
+    width: 8rem !important;
+    height: 2rem !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+.inputLevel{
+    margin: 0 !important;
+    padding: 0 !important;
+} */
+
+.rightNavbar{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.leftNavbar{
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}

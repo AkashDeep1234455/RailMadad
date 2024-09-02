@@ -1,0 +1,15 @@
+.Form{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    overflow: auto;
+}
+
+.formContainer{
+    background-color: white;
+    width: 50%;
+    height: 80%;
+}
