@@ -50,6 +50,7 @@ export default function Navbar() {
             m: 1,
             width: "7.5rem"
           }}
+
         >
           <InputLabel
             id="Language"
