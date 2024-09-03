@@ -5,6 +5,7 @@ import { faBuilding } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import Train from "./Train";
 import Station from "./Station";
+import {Route, Routes, NavLink, BrowserRouter as Router} from "react-router-dom"
 
 export default function Form() {
   const [selectedForm, setSelectedForm] = useState("Train");
@@ -20,7 +21,8 @@ export default function Form() {
       <div className="formContainer">
 
         <div className="fromComp">
-          <button
+          <NavLink
+            to='/'
             className="formCompButton"
             onClick={() => handleFormChange("Train")}
           >
@@ -30,8 +32,9 @@ export default function Form() {
               icon={faTrain}
             />
             Train
-          </button>
-          <button
+          </NavLink>
+          <NavLink
+            to = '/station'
             className="formCompButton"
             onClick={() => handleFormChange("Station")}
           >
@@ -41,46 +44,46 @@ export default function Form() {
               icon={faBuilding}
             />
             Station
-          </button>
-          <button className="formCompButton">
+          </NavLink>
+          <NavLink to='/apprciation' className="formCompButton">
             <FontAwesomeIcon
               className="formCompIcon"
               style={{ fontSize: "2rem" }}
               icon={faBuilding}
             />
             Apperciation/Rail Anubhav
-          </button>
-          <button className="formCompButton">
+          </NavLink>
+          <NavLink to='/enquiry' className="formCompButton">
             <FontAwesomeIcon
               className="formCompIcon"
               style={{ fontSize: "2rem" }}
               icon={faBuilding}
             />
             Enquiry
-          </button>
-          <button className="formCompButton">
+          </NavLink>
+          <NavLink to='/tract-query' className="formCompButton">
             <FontAwesomeIcon
               className="formCompIcon"
               style={{ fontSize: "2rem" }}
               icon={faBuilding}
             />
             Track Your Concern
-          </button>
-          <button className="formCompButton">
+          </NavLink>
+          <NavLink to='/suggestion' className="formCompButton">
             <FontAwesomeIcon
               className="formCompIcon"
               style={{ fontSize: "2rem" }}
               icon={faBuilding}
             />
             Suggestions
-          </button>
+          </NavLink>
         </div>
+        <Routes>
+          <Route path="/" element={<Train />} />
+          <Route path="/station" element={<Station />} />
+          <Route path="/*" element={<Train/>} />
+        </Routes>
 
-        {/* Train  */}
-        {selectedForm === "Train" && <Train />}
-
-        {/* Station  */}
-        {selectedForm === "Station" && <Station />}
       </div>
     </div>
   );
