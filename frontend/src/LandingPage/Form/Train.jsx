@@ -8,12 +8,15 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { TextField, Stack } from "@mui/material";
+import { sendOtp, verifyOtp } from "./otphandle";
 
 export default function Train() {
   const [pnr, setPnr] = useState("");
   const [selectedDateTime, setSelectedDateTime] = useState(null);
   const [isOtpRequested, setIsOtpRequested] = useState(false);
   const [isOtpVerified, setIsOtpVerified] = useState(false);
+  const [otptoken, setotptoken] = useState("");
+  const [userOtp, setuserOtp] = useState("");
 
   let [formDataTrain, setFormDataTrain] = useState({
     mobileNo: "",
@@ -34,12 +37,13 @@ export default function Train() {
     });
   };
 
+  let userotpchange = (event) => {
+    setuserOtp(event.target.value);
+  };
 
   let handleSubmitTrain = (event) => {
     console.log(formDataTrain);
-
     event.preventDefault();
-
     setFormDataTrain({
       mobileNo: "",
       pnrNo: "",
@@ -50,12 +54,17 @@ export default function Train() {
     });
   };
 
-
   const handleGetOtp = () => {
+    sendOtp({ mobileNumber: formDataTrain.mobileNo, setotptoken });
     setIsOtpRequested(true);
   };
 
   const handleVerifyOtp = () => {
+    verifyOtp({
+      otp: userOtp,
+      mobileNumber: formDataTrain.mobileNo,
+      token: otptoken,
+    });
     setIsOtpVerified(true);
   };
 
@@ -95,7 +104,7 @@ export default function Train() {
               variant="outlined"
               sx={{ minWidth: 200 }}
               required
-              onChange={handleInputChangeTrain}
+              onChange={userotpchange}
               disabled={isOtpVerified}
             />
             <Button

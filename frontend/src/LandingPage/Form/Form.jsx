@@ -11,14 +11,10 @@ export default function Form() {
 
   const handleFormChange = (formType) => {
     setSelectedForm(formType);
-    setIsOtpRequested(false);
-    setIsOtpVerified(false);
   };
-
   return (
     <div className="Form">
       <div className="formContainer">
-
         <div className="fromComp">
           <button
             className="formCompButton"
