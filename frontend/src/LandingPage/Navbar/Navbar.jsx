@@ -24,7 +24,7 @@ export default function Navbar() {
         />
 
         <div className="logo">
-          <p className="RailMadadL">RailMadad</p>
+          <p className="RailMadadL">RailSevak</p>
           <p className="CaptionL">For Inquiry, Assistance & Grievance Redressal</p>
         </div>
       </div>

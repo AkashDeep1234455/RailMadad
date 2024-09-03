@@ -4,7 +4,7 @@ export default function Footer(){
         <div className="Footer">
 
             <div className="leftFooter">
-                <p>Copyright &copy; RAILMADAD. All Rights Reserved.</p>
+                <p>Copyright &copy; RAILSEVAK. All Rights Reserved.</p>
             </div>
 
             <div className="rightFooter">
