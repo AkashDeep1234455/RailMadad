@@ -8,7 +8,7 @@ import Select from '@mui/material/Select';
 import { useState } from "react";
 
 export default function Navbar() {
-  const [language, setLanguage] = useState("");
+  const [language, setLanguage] = useState(""); 
 
   const handleChange = (event) => {
     setLanguage(event.target.value);

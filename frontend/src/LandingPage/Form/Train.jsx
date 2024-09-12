@@ -1,62 +1,53 @@
 import "./Form.css";
+import { useSelector, useDispatch } from "react-redux";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { useState } from "react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { TextField, Stack } from "@mui/material";
 import { sendOtp, verifyOtp } from "./otphandle";
 
-export default function Train() {
-  const [pnr, setPnr] = useState("");
-  const [selectedDateTime, setSelectedDateTime] = useState(null);
-  const [isOtpRequested, setIsOtpRequested] = useState(false);
-  const [isOtpVerified, setIsOtpVerified] = useState(false);
-  const [otptoken, setotptoken] = useState("");
-  const [userOtp, setuserOtp] = useState("");
+import { setFormDataTrain, setPnr, setSelectedDateTime, resetTrainFormData } from "../features/trainSlices/trainFormSlices";
+import { requestOtp, verifyOtp as verifyOtpAction, setUserOtp } from "../features/otpSlices/otpSlice";
 
-  let [formDataTrain, setFormDataTrain] = useState({
-    mobileNo: "",
-    pnrNo: "",
-    dateAndTime: "",
-    image1: "",
-    image2: "",
-    grievanceDescription: "",
-  });
+export default function Train() {
+  const dispatch = useDispatch();
+  const formDataTrain = useSelector((state) => state.trainForm.formDataTrain);
+  const pnr = useSelector((state) => state.trainForm.pnr);
+  const selectedDateTime = useSelector((state) => state.trainForm.selectedDateTime);
+  const isOtpRequested = useSelector((state) => state.otp.isOtpRequested);
+  const isOtpVerified = useSelector((state) => state.otp.isOtpVerified);
+  const otptoken = useSelector((state) => state.otp.otptoken);
+  const userOtp = useSelector((state) => state.otp.userOtp);
 
   const handleChange = (event) => {
-    setPnr(event.target.value);
+    dispatch(setPnr(event.target.value));
   };
 
-  let handleInputChangeTrain = (event) => {
-    setFormDataTrain((prevData) => {
-      return { ...prevData, [event.target.name]: event.target.value };
-    });
+  const handleInputChangeTrain = (event) => {
+    dispatch(setFormDataTrain({ [event.target.name]: event.target.value }));
   };
 
-  let userotpchange = (event) => {
-    setuserOtp(event.target.value);
+  const userotpchange = (event) => {
+    dispatch(setUserOtp(event.target.value));
   };
 
-  let handleSubmitTrain = (event) => {
-    console.log(formDataTrain);
+  const handleSubmitTrain = (event) => {
     event.preventDefault();
-    setFormDataTrain({
-      mobileNo: "",
-      pnrNo: "",
-      dateAndTime: "",
-      image1: "",
-      image2: "",
-      grievanceDescription: "",
-    });
+    console.log(formDataTrain);
+    dispatch(resetTrainFormData());
   };
 
   const handleGetOtp = () => {
-    sendOtp({ mobileNumber: formDataTrain.mobileNo, setotptoken });
-    setIsOtpRequested(true);
+    console.log(isOtpRequested);
+    sendOtp({
+      mobileNumber: formDataTrain.mobileNo,
+      setotptoken: (token) => dispatch(requestOtp(token)),
+    });
+    console.log(isOtpRequested);
   };
 
   const handleVerifyOtp = () => {
@@ -65,7 +56,7 @@ export default function Train() {
       mobileNumber: formDataTrain.mobileNo,
       token: otptoken,
     });
-    setIsOtpVerified(true);
+    dispatch(verifyOtpAction());
   };
 
   return (
@@ -78,9 +69,11 @@ export default function Train() {
             name="mobileNo"
             variant="outlined"
             sx={{ minWidth: 200 }}
+            type="tel"
             required
             onChange={handleInputChangeTrain}
-            disabled={isOtpVerified}
+            disabled={isOtpRequested}
+            
           />
           <Button
             variant="contained"
@@ -136,16 +129,26 @@ export default function Train() {
               <MenuItem value={"UTS"}>UTS</MenuItem>
             </Select>
           </FormControl>
-          <TextField
+          {pnr === "PNR" && <TextField
             id="outlined-basic"
             label="PNR No."
+            sx={{ ml: 2 }}
             name="pnrNo"
             variant="outlined"
+            required
+            disabled={!isOtpVerified}
+            onChange={handleInputChangeTrain}
+          />}
+          {pnr === "UTS" && <TextField
+            id="outlined-basic"
+            label="UTS No."
+            name="utsNo"
+            variant="outlined"
             sx={{ ml: 2 }}
+            disabled={!isOtpVerified}
             required
             onChange={handleInputChangeTrain}
-            disabled={!isOtpVerified}
-          />
+          />}
         </div>
 
         <br />
@@ -158,7 +161,7 @@ export default function Train() {
               defaultValue={Date.now()}
               required
               name="dateAndTime"
-              onChange={(newValue) => setSelectedDateTime(newValue)}
+              onChange={(newValue) => dispatch(setSelectedDateTime(newValue))}
               renderInput={(params) => <TextField {...params} />}
               disabled={!isOtpVerified}
             />
@@ -173,11 +176,8 @@ export default function Train() {
             id="outlined-basic"
             label="Image"
             variant="outlined"
-            // size='small'
             required
             type="file"
-            // onChange={handleInputChange}
-            // value={formData.image}
             name="image1"
             onChange={handleInputChangeTrain}
             sx={{ width: 650 }}
@@ -194,11 +194,8 @@ export default function Train() {
             id="outlined-basic"
             label="Image"
             variant="outlined"
-            // size='small'
             required
             type="file"
-            // onChange={handleInputChange}
-            // value={formData.image}
             name="image2"
             onChange={handleInputChangeTrain}
             sx={{ width: 650 }}
@@ -214,11 +211,8 @@ export default function Train() {
             id="outlined-basic"
             label="Grievance Description"
             variant="outlined"
-            // size='small'
             required
             type="textArea"
-            // onChange={handleInputChange}
-            // value={formData.image}
             name="grievanceDescription"
             onChange={handleInputChangeTrain}
             sx={{ width: 650 }}
