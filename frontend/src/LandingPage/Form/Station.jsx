@@ -9,52 +9,58 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { TextField, Stack } from "@mui/material";
 
-export default function Train() {
-  const [pnr, setPnr] = useState("");
-  const [selectedDateTime, setSelectedDateTime] = useState(null);
-  const [isOtpRequested, setIsOtpRequested] = useState(false);
-  const [isOtpVerified, setIsOtpVerified] = useState(false);
+import { sendOtp, verifyOtp } from "./otphandle";
+import {setFormDataStation, setPnr, setSelectDateTime, resetStationFormData} from "../features/stationSlice/stationFormSlice"
+import { requestOtp, verifyOtp as verifyOtpAction, setUserOtp } from "../features/otpSlices/otpSlice";
+import {useSelector, useDispatch} from "react-redux"
 
-  let [formDataStation, setFormDataStation] = useState({
-    mobileNo: "",
-    pnrNo: "",
-    dateAndTime: "",
-    image1: "",
-    image2: "",
-    grievanceDescription: "",
-  });
+export default function Train() {
+  const dispatch = useDispatch();
+  const formDataStation = useSelector((state) => state.stationForm.formDataStation);
+  const pnr = useSelector((state) => state.stationForm.pnr);
+  const selectedDateTime = useSelector((state) => state.stationForm.selectedDateTime);
+  const  isOtpRequested = useSelector((state) => state.otp.isOtpRequested);
+  const isOtpVerified = useSelector((state) => state.otp.isOtpVerified);
+  const otptoken = useSelector((state) => state.otp.otptoken);
+  const userOtp = useSelector((state) => state.otp.userOtp);
 
   const handleChange = (event) => {
-    setPnr(event.target.value);
+    dispatch(setPnr(event.target.value));
   };
 
   let handleInputChangeStation = (event) => {
-    setFormDataTrain((prevData) => {
+    dispatch(setFormDataStation((prevData) => {
       return { ...prevData, [event.target.name]: event.target.value };
-    });
+    }));
   };
 
   let handleSubmitStation = (event) => {
-    console.log(formDataTrain);
 
     event.preventDefault();
+    console.log(formDataStation);
+    dispatch(resetStationFormData());
+  };
 
-    setFormDataStation({
-      mobileNo: "",
-      pnrNo: "",
-      dateAndTime: "",
-      image1: "",
-      image2: "",
-      grievanceDescription: "",
-    });
+  const userotpchange = (event) => {
+    dispatch(setUserOtp(event.target.value));
   };
 
   const handleGetOtp = () => {
-    setIsOtpRequested(true);
+    console.log(isOtpRequested);
+    sendOtp({
+      mobileNumber: formDataStation.mobileNo,
+      setotptoken: (token) => dispatch(requestOtp(token)),
+    });
+    console.log(isOtpRequested);
   };
 
   const handleVerifyOtp = () => {
-    setIsOtpVerified(true);
+    verifyOtp({
+      otp: userOtp,
+      mobileNumber: formDataStation.mobileNo,
+      token: otptoken,
+    });
+    dispatch(verifyOtpAction());
   };
 
   return (
@@ -66,7 +72,8 @@ export default function Train() {
               label="Select Date & Time"
               value={selectedDateTime}
               required
-              onChange={(newValue) => setSelectedDateTime(newValue)}
+              defaultValue={Date.now()}
+              onChange={handleInputChangeStation}
               renderInput={(params) => <TextField {...params} />}
             />
           </Stack>
@@ -80,11 +87,8 @@ export default function Train() {
             id="outlined-basic"
             label="Grievance Description"
             variant="outlined"
-            // size='small'
             required
             type="textArea"
-            // onChange={handleInputChange}
-            // value={formData.image}
             onChange={handleInputChangeStation}
             name="Grievance Description"
             sx={{ width: 650 }}
@@ -112,12 +116,22 @@ export default function Train() {
               <MenuItem value={"UTS"}>UTS</MenuItem>
             </Select>
           </FormControl>
-          <TextField
+          {pnr === "PNR" && <TextField
             id="outlined-basic"
             label="PNR No."
+            name="pnrNo"
             variant="outlined"
             required
-          />
+            onChange={handleInputChangeStation}
+          />}
+          {pnr === "UTS" && <TextField
+            id="outlined-basic"
+            label="UTS No."
+            name="utsNo"
+            variant="outlined"
+            required
+            onChange={handleInputChangeStation}
+          />}
         </div>
 
         <br />
@@ -186,7 +200,7 @@ export default function Train() {
             required
             name="mobileNo"
             onChange={handleInputChangeStation}
-            disabled={isOtpVerified}
+            disabled={isOtpRequested}
           />
           <Button
             variant="contained"
@@ -210,7 +224,7 @@ export default function Train() {
               variant="outlined"
               sx={{ minWidth: 200 }}
               required
-              onChange={handleInputChangeStation}
+              onChange={userotpchange}
               disabled={isOtpVerified}
             />
             <Button
